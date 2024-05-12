@@ -1,0 +1,30 @@
+name: exe_compile
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8.6'
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install psutil pywin32 pyinstaller
+    - name: Build EXE
+      run: |
+        pyinstaller --onefile .\index.py --name windowsServiceMonitor-autoRestart
+    - name: Upload EXE
+      uses: actions/upload-artifact@v2
+      with:
+        name: windowsServiceMonitor-autoRestart
+        path: .\dist\windowsServiceMonitor-autoRestart.exe
